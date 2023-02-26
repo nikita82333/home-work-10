@@ -6,7 +6,7 @@ int main(int argc, char* argv[]) {
 
     try {
         if (argc != 3) {
-            std::cerr << "Usage: async_tcp_echo_server <port> <bulk_size>" << std::endl;
+            std::cerr << "Usage: bulk_server <port> <bulk_size>" << std::endl;
             return 1;
         }
 
