@@ -1,4 +1,5 @@
 #include <future>
+#include <cstring>
 
 #include "Controller.h"
 #include "async.h"
@@ -39,9 +40,13 @@ namespace async {
                 std::lock_guard<std::mutex> lock(context->parser_mutex);
                 context->controller->parse_command(line);
             }
+            delete[] data;
         };
 
-        auto future = std::async(std::launch::async, worker, context, data, size);
+        char* data_copy = new char[size];
+        memcpy(data_copy, data, size);
+
+        auto future = std::async(std::launch::async, worker, context, data_copy, size);
         std::lock_guard<std::mutex> lock(context->futures_mutex);
         context->futures.push_back(std::move(future));
     }

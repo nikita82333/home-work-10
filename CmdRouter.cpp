@@ -16,8 +16,8 @@ void CmdRouter::send(char* data, std::size_t length) {
                 dynamic_block = data[i];
                 is_dynamic_block = true;
                 if (!static_block.empty()) {
-                    std::lock_guard<std::mutex> lock(_common_sender_mutex);
-                    _common_sender->send(const_cast<char*>(static_block.c_str()), static_block.length());
+                    _common_sender->send(static_block);
+                    static_block.clear();
                 }
             }
             ++brackets_count;
@@ -28,9 +28,9 @@ void CmdRouter::send(char* data, std::size_t length) {
             if (brackets_count == 0) {
                 dynamic_block += data[i];
                 AsyncSender sender(_bulk_size);
-                sender.send(const_cast<char*>(dynamic_block.c_str()), dynamic_block.length());
+                sender.send(dynamic_block);
                 is_dynamic_block = false;
-                static_block.clear();
+                dynamic_block.clear();
             }
         } else if (is_dynamic_block) {
             dynamic_block += data[i];
@@ -39,9 +39,6 @@ void CmdRouter::send(char* data, std::size_t length) {
         }
     }
     if (brackets_count == 0 && !static_block.empty()) {
-        std::lock_guard<std::mutex> lock(_common_sender_mutex);
-        _common_sender->send(const_cast<char*>(static_block.c_str()), static_block.length());
+        _common_sender->send(static_block);
     }
-    std::lock_guard<std::mutex> lock(_common_sender_mutex);
-    _common_sender->reconnect();//there may also be other ways
 }

@@ -1,7 +1,6 @@
 #ifndef CMDROUTER_H
 #define CMDROUTER_H
 
-#include <mutex>
 #include <memory>
 #include <string>
 
@@ -18,9 +17,7 @@ public:
     void send(char* data, std::size_t length);
 
 private:
-
     std::size_t _bulk_size;
-    std::mutex _common_sender_mutex;
 
     std::shared_ptr<AsyncSender> _common_sender;
 

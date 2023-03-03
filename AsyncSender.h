@@ -1,6 +1,8 @@
 #ifndef ASYNCSENDER_H
 #define ASYNCSENDER_H
 
+#include <string>
+
 #include "async.h"
 
 /// <summary>
@@ -12,13 +14,14 @@ public:
     explicit AsyncSender(std::size_t bulk_size);
     ~AsyncSender();
 
-    void send(char* data, std::size_t length);
     [[nodiscard]] std::size_t get_bulk_size() const;
+    void send(const std::string& data);
     void reconnect();
 
 private:
-    async::handle_t _handle;
     std::size_t _bulk_size;
+    async::handle_t _handle;
+
 };
 
 

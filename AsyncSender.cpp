@@ -8,12 +8,12 @@ AsyncSender::~AsyncSender() {
     async::disconnect(_handle);
 }
 
-void AsyncSender::send(char* data, std::size_t length) {
-    async::receive(_handle, data, length);
-}
-
 std::size_t AsyncSender::get_bulk_size() const {
     return _bulk_size;
+}
+
+void AsyncSender::send(const std::string& data) {
+    async::receive(_handle, data.c_str(), data.length());
 }
 
 void AsyncSender::reconnect() {

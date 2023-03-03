@@ -1,7 +1,6 @@
 #ifndef SESSION_H
 #define SESSION_H
 
-#include <iostream>
 #include <memory>
 #include <utility>
 #include <boost/asio.hpp>
@@ -10,15 +9,23 @@
 
 using boost::asio::ip::tcp;
 
+enum class Mode {
+    Line,
+    Symbolic
+};
+
 /// <summary>
 /// Class Session - establishes a network connection.
 /// </summary>
 /// <param name="socket">Network socket.</param>
 /// <param name="sender">Shared pointer to AsyncSender.</param>
+/// <param name="mode">Server operation mode (line or symbolic).</param>
 class Session : public std::enable_shared_from_this<Session> {
 public:
-    Session(tcp::socket socket, std::shared_ptr<AsyncSender> sender)
-        : _socket(std::move(socket)), _sender(std::move(sender)) {}
+    Session(tcp::socket socket, std::shared_ptr<AsyncSender> sender, Mode mode)
+        : _socket(std::move(socket)), _sender(std::move(sender)), _mode(mode) {}
+
+    ~Session();
 
     void start();
 
@@ -31,6 +38,8 @@ private:
 
     std::shared_ptr<AsyncSender> _sender;
     CmdRouter _router {_sender};
+    std::string _line;
+    Mode _mode;
 
 };
 
